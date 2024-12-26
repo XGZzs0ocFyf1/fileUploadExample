@@ -4,7 +4,7 @@ import a.v.g.wordApp.model.FileDB;
 import a.v.g.wordApp.response.ResponseFile;
 import a.v.g.wordApp.response.ResponseMessage;
 import a.v.g.wordApp.service.FileStorageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin("http://localhost:8081")
+@RequiredArgsConstructor
 public class FileController {
 
-    @Autowired
-    private FileStorageService storageService;
+    private final FileStorageService storageService;
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -51,7 +51,7 @@ public class FileController {
                     fileDownloadUri,
                     dbFile.getType(),
                     dbFile.getData().length);
-        }).collect(Collectors.toList());
+        }).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(files);
     }
