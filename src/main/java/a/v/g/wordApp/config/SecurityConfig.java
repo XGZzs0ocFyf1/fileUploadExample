@@ -34,6 +34,7 @@ public class SecurityConfig {
                                 .requestMatchers("/hello").anonymous()
                                 .requestMatchers("/auth").anonymous()
                                 .requestMatchers("/auth").permitAll()
+                                .requestMatchers("/send-email").permitAll()
                                 .requestMatchers("/unsecured").anonymous()
                                 .requestMatchers("/secured/**").authenticated()
                                 .requestMatchers("info").authenticated()

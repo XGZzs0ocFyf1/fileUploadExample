@@ -10,4 +10,6 @@ public class WordAppApplication {
 		SpringApplication.run(WordAppApplication.class, args);
 	}
 
+
+
 }
