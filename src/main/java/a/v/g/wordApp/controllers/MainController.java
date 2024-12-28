@@ -15,7 +15,7 @@ public class MainController {
         return "Secured data";
     }
 
-        @GetMapping("/unsecured")
+    @GetMapping("/unsecured")
     public String unsecuredData() {
         return "Unecured data";
     }
