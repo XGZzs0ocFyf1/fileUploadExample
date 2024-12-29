@@ -1,18 +1,27 @@
 package a.v.g.wordApp.config;
 
 import a.v.g.wordApp.service.UserService;
+import a.v.g.wordApp.utils.CustomLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
 @Configuration
@@ -21,16 +30,20 @@ import org.springframework.security.web.SecurityFilterChain;
 //@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final UserService userService;
-
+    private final AccessDeniedHandler accessDeniedHandler;
+    private final JwtFilter jwtFilter;
+    private final CustomLogoutHandler customLogoutHandler;
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize
+                                .requestMatchers("/login/**","/registration/**", "/refresh_token/**").permitAll()
+                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/hello").anonymous()
                                 .requestMatchers("/auth").anonymous()
                                 .requestMatchers("/auth").permitAll()
@@ -41,11 +54,21 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
 
                 )
-                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-//                .exceptionHandling(x -> x.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
-        return http.build();
+                .exceptionHandling(e -> {
+                    e.accessDeniedHandler(accessDeniedHandler)
+                            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                })
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(log -> {
+                    log.logoutUrl("/logout");
+                    log.addLogoutHandler(customLogoutHandler);
+                    log.logoutSuccessHandler((request, response, authentication) ->
+                            SecurityContextHolder.clearContext());
+                })
+                .build();
 }
+
 
 
 
