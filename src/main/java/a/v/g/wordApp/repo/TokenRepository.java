@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
     @Query("""
             SELECT t FROM Token t inner join User u
-            on t.user.user_id = u.user_id
-            where t.user.user_id = :userId and t.loggedOut = false
+            on t.user.userId = u.userId
+            where t.user.userId = :userId and t.loggedOut = false
             """)
     List<Token> findAllAccessTokenByUser(Long userId);
 

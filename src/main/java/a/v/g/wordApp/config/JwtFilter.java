@@ -1,8 +1,8 @@
 package a.v.g.wordApp.config;
 
 
-import a.v.g.wordApp.service.UserService;
-import a.v.g.wordApp.service.tokens.JwtService;
+import a.v.g.wordApp.service.UserMainService;
+import a.v.g.wordApp.service.tokens.JwtMainService;
 import a.v.g.wordApp.utils.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,8 +24,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final JwtService jwtService;
-    private final UserService userService;
+    private final JwtMainService jwtMainService;
+    private final UserMainService userMainService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -45,9 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = jwtTokenUtil.getUsernameFromToken(token);
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
+            UserDetails userDetails = userMainService.loadUserByUsername(username);
 
-            if(jwtService.isValidToken(token, userDetails)) {
+            if(jwtMainService.isValidToken(token, userDetails.getUsername())) {
                 var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

@@ -20,7 +20,7 @@ public class MainController {
         return "Unecured data";
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin-old")
     public String admin() {
         return "Admin data";
     }
@@ -30,8 +30,8 @@ public class MainController {
         return principal.getName();
     }
 
-    @GetMapping("/hello")
-    public String index() {
-        return "Hello World!";
-    }
+//    @GetMapping("/hello")
+//    public String index() {
+//        return "Hello World!";
+//    }
 }

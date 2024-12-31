@@ -1,6 +1,6 @@
 package a.v.g.wordApp.config;
 
-import a.v.g.wordApp.service.UserService;
+import a.v.g.wordApp.service.UserMainService;
 import a.v.g.wordApp.utils.CustomLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,7 +27,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 //@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private final UserService userService;
+    private final UserMainService userMainService;
     private final AccessDeniedHandler accessDeniedHandler;
     private final JwtFilter jwtFilter;
     private final CustomLogoutHandler customLogoutHandler;
@@ -44,6 +42,7 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/login/**","/registration/**", "/refresh_token/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/admin-old/**").hasAuthority("ADMIN")
                                 .requestMatchers("/hello").anonymous()
                                 .requestMatchers("/auth").anonymous()
                                 .requestMatchers("/auth").permitAll()
@@ -77,7 +76,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         var daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userService);
+        daoAuthenticationProvider.setUserDetailsService(userMainService);
         return daoAuthenticationProvider;
     }
 

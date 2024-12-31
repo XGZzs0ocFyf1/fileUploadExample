@@ -22,20 +22,10 @@ public class JwtTokenUtil {
 
     private static final SecretKey SECRET_KEY = getSecretKey();
 
-    @Value("${jwt.expiration}")
-    private Duration jwtExpirationInMs;
-
-    @Value("${jwt.refreshExpiration}")
-    private Duration refreshExpirationInMs;
 
 
-    public String generateAccessToken(String username) {
-        return generateToken(username, new Date(System.currentTimeMillis() + jwtExpirationInMs.toMillis()));
-    }
 
-    public String generateRefreshToken(String username) {
-        return generateToken(username, new Date(System.currentTimeMillis() + refreshExpirationInMs.toMillis()));
-    }
+
 
     public boolean validateToken(String token) {
         try {
@@ -52,14 +42,14 @@ public class JwtTokenUtil {
                 .getSubject();
     }
 
-    private Jws<Claims> parseClaims(String token) {
+    public Jws<Claims> parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(SECRET_KEY) // Установка ключа для валидации
                 .build()
                 .parseSignedClaims(token);
     }
 
-    private String generateToken(String username, Date expirationDate) {
+    public String generateToken(String username, Date expirationDate) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())

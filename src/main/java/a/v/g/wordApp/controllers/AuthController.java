@@ -1,10 +1,15 @@
 package a.v.g.wordApp.controllers;
 
-import a.v.g.wordApp.dtos.JwtRequest;
+import a.v.g.wordApp.dtos.AuthenticationResponseDto;
 import a.v.g.wordApp.dtos.JwtResponse;
+import a.v.g.wordApp.dtos.LoginRq;
+import a.v.g.wordApp.dtos.RegistrationUserDto;
 import a.v.g.wordApp.exceptions.AppError;
+import a.v.g.wordApp.service.AuthenticationService;
 import a.v.g.wordApp.service.UserService;
-import a.v.g.wordApp.utils.JwtTokenUtils;
+import a.v.g.wordApp.service.tokens.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +24,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserService userService;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final UserService userMainService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/auth")
-    public  ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest){
+    public  ResponseEntity<?> createAuthToken(@RequestBody LoginRq authRequest){
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(new AppError(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password"));
         }
-        UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
-        String token = jwtTokenUtils.generateToken(userDetails);
+        UserDetails userDetails = userMainService.loadUserByUsername(authRequest.username());
+        String token = jwtService.generateAccessToken(userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(token));
+    }
 
+    @PostMapping("/registration")
+    public ResponseEntity<String> register(
+            @RequestBody RegistrationUserDto registrationDto) {
+
+        if(userMainService.existsByUsername(registrationDto.username())) {
+            return ResponseEntity.badRequest().body("Имя пользователя уже занято");
+        }
+
+        if(userMainService.existsByEmail(registrationDto.email())) {
+            return ResponseEntity.badRequest().body("Email уже занят");
+        }
+
+        authenticationService.registrationRequest(registrationDto);
+
+        return ResponseEntity.ok("Регистрация прошла успешно");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponseDto> authenticate(
+            @RequestBody LoginRq request) {
+
+        return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @PostMapping("/refresh_token")
+    public ResponseEntity<AuthenticationResponseDto> refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        return authenticationService.refreshToken(request, response);
     }
 }
