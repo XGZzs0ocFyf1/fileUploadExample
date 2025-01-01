@@ -78,5 +78,14 @@ public class JwtMainService implements JwtService {
         tokenRepository.save(token);
     }
 
+    @Override
+    public void saveRegistrationToken(String registrationToken, User user) {
+        Token t = Token.builder()
+                .accessToken(registrationToken)
+                .user(user)
+                .build();
+        tokenRepository.save(t);
+    }
+
 
 }

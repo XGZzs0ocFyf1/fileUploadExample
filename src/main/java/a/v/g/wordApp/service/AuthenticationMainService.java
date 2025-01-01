@@ -3,6 +3,7 @@ package a.v.g.wordApp.service;
 import a.v.g.wordApp.dtos.AuthenticationResponseDto;
 import a.v.g.wordApp.dtos.LoginRq;
 import a.v.g.wordApp.dtos.RegistrationUserDto;
+import a.v.g.wordApp.exceptions.CodeNotFoundException;
 import a.v.g.wordApp.model.sec.ROLE_NAME;
 import a.v.g.wordApp.model.sec.Role;
 import a.v.g.wordApp.model.sec.User;
@@ -33,6 +34,7 @@ public class AuthenticationMainService implements AuthenticationService{
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
+    private final AuthCodeService authCodeService;
 
     public void registrationRequest(RegistrationUserDto request) {
         var userRole = roleRepository.findByName(ROLE_NAME.USER.toString()).orElse(
@@ -46,7 +48,16 @@ public class AuthenticationMainService implements AuthenticationService{
                 .password(passwordEncoder.encode(request.password()))
                 .roles(List.of(userRole))
                 .build();
-        userRepository.save(user);
+        var newUser = userRepository.save(user);
+
+        var authCode = authCodeService.generateAuthCode(user);
+
+        emailService.sendRegistrationEmail(user.getUsername(), newUser.getEmail(), authCode.getAuthCode());
+    }
+
+    @Override
+    public void registrationSubmit(String registrationToken) {
+
     }
 
 
@@ -89,6 +100,14 @@ public class AuthenticationMainService implements AuthenticationService{
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @Override
+    public ResponseEntity<AuthenticationResponseDto>  submitRegistration(String rt) throws CodeNotFoundException {
+        authCodeService.submitAuthCode(rt);
+        authCodeService.disableAuthCode(rt);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

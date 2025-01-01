@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
+
     private final UserService userMainService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -41,22 +42,6 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<String> register(
-            @RequestBody RegistrationUserDto registrationDto) {
-
-        if(userMainService.existsByUsername(registrationDto.username())) {
-            return ResponseEntity.badRequest().body("Имя пользователя уже занято");
-        }
-
-        if(userMainService.existsByEmail(registrationDto.email())) {
-            return ResponseEntity.badRequest().body("Email уже занят");
-        }
-
-        authenticationService.registrationRequest(registrationDto);
-
-        return ResponseEntity.ok("Регистрация прошла успешно");
-    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDto> authenticate(

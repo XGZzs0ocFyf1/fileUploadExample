@@ -1,5 +1,6 @@
 package a.v.g.wordApp.service;
 
+import a.v.g.wordApp.utils.EmailUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,10 @@ public class EmailMainService implements EmailService {
 
     @Value("${spring.mail.username}")
     private String userName;
+    private final EmailUtil emailUtil;
+
+    @Value("${registration.subject}")
+    private String regSubject;
 
     public void sendEmail(String to, String subject, String text){
         try {
@@ -36,5 +41,11 @@ public class EmailMainService implements EmailService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void sendRegistrationEmail(String userName, String email, String registrationToken) {
+        var text = emailUtil.generateRegistrationEmail(userName, registrationToken);
+        sendEmail(email, regSubject, text );
     }
 }

@@ -1,6 +1,8 @@
 package a.v.g.wordApp.utils;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,16 +18,13 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil {
 
-    private static SecretKey getSecretKey() {
-        return Jwts.SIG.HS256.key().build();
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private SecretKey getSecretKey() {
+        var bytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(bytes);
     }
-
-    private static final SecretKey SECRET_KEY = getSecretKey();
-
-
-
-
-
 
     public boolean validateToken(String token) {
         try {
@@ -44,7 +43,7 @@ public class JwtTokenUtil {
 
     public Jws<Claims> parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith(SECRET_KEY) // Установка ключа для валидации
+                .verifyWith(getSecretKey()) // Установка ключа для валидации
                 .build()
                 .parseSignedClaims(token);
     }
@@ -54,7 +53,7 @@ public class JwtTokenUtil {
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(expirationDate)
-                .signWith(SECRET_KEY)
+                .signWith(getSecretKey())
                 .compact();
     }
 
@@ -69,7 +68,7 @@ public class JwtTokenUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        return !extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(new Date());
     }
 
 
@@ -80,12 +79,11 @@ public class JwtTokenUtil {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(SECRET_KEY)
+                .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
-
 
 
 }

@@ -9,4 +9,5 @@ public interface JwtService {
      String getUsernameFromToken(String token);
      void revokeAllToken(User user);
      void saveUserToken(String accessToken, String refreshToken, User user);
+     void saveRegistrationToken(String registrationToken,  User user);
 }

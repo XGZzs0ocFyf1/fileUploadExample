@@ -51,3 +51,21 @@ jwt:
   secret: ${jwtSecret}
   lifetime: 30m
   refreshExpiration: 600m
+
+registration:
+  link: "http://localhost:8080/registration/submit?rt="
+  textTemplate: "Привет! {0},
+            
+            Спасибо за регистрацию на нашем сервисе. Для завершения регистрации, пожалуйста, перейдите по следующей ссылке:
+            
+            {1}
+            
+            Если вы не запрашивали это письмо, пожалуйста, проигнорируйте его.
+            
+            С уважением,
+            Команда сервиса"
+  subject: Регистрация в Word App
+  authCode:
+    lifeTime: 30m
+
+
