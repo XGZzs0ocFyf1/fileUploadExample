@@ -1,6 +1,7 @@
 package a.v.g.wordApp.repo;
 
 import a.v.g.wordApp.model.sec.Token;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,6 +15,12 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
             where t.user.userId = :userId and t.loggedOut = false
             """)
     List<Token> findAllAccessTokenByUser(Long userId);
+
+    @Query("""
+       SELECT t FROM Token t inner join User u
+            on t.user.userId = u.userId
+            where t.accessToken = :accessToken
+    """)
 
     Optional<Token> findByAccessToken(String accessToken);
 

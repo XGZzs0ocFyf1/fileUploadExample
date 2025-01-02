@@ -31,4 +31,15 @@ public class Token {
                 this.user
         );
     }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "tokenId=" + tokenId +
+                ", accessToken='" + accessToken + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
+                ", loggedOut=" + loggedOut +
+                ", user=" + user.getUsername() +
+                '}';
+    }
 }

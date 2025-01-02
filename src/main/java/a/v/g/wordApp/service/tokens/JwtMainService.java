@@ -1,16 +1,19 @@
 package a.v.g.wordApp.service.tokens;
 
 
+import a.v.g.wordApp.dtos.TokenDTO;
 import a.v.g.wordApp.model.sec.Token;
 import a.v.g.wordApp.model.sec.User;
 import a.v.g.wordApp.repo.TokenRepository;
 import a.v.g.wordApp.utils.JwtTokenUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,19 +38,21 @@ public class JwtMainService implements JwtService {
         return jwtTokenUtil.generateToken(username, new Date(System.currentTimeMillis() + refreshExpirationInMs.toMillis()));
     }
 
+    @Transactional
     public boolean isValidToken(String token, String userName) {
 
         String usernameFromToken = jwtTokenUtil.getUsernameFromToken(token);
+        var isNotExpired = !jwtTokenUtil.isTokenExpired(token);
+        var sameName = usernameFromToken.equals(userName);
 
-        boolean isValidToken = tokenRepository.findByAccessToken(token)
+        var isValidToken = tokenRepository.findByAccessToken(token)
                 .map(Token::getLoggedOut)
                 .map(loggedOut -> !loggedOut)
                 .orElse(false);
 
-        return usernameFromToken.equals(userName)
-                && jwtTokenUtil.isTokenExpired(token)
-                && isValidToken;
+        return sameName && isNotExpired && isValidToken;
     }
+
 
     @Override
     public String getUsernameFromToken(String token) {
@@ -72,6 +77,7 @@ public class JwtMainService implements JwtService {
         Token token = Token.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .loggedOut(false)
                 .user(user)
                 .build();
 

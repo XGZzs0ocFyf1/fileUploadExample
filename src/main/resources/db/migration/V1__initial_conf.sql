@@ -33,7 +33,7 @@ CREATE TABLE word_app.tokens (
         token_id int8  generated always as identity primary key,
         access_token varchar,
         refresh_token varchar,
-        logged_out varchar,
+        logged_out boolean not null,
         user_id bigint,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
