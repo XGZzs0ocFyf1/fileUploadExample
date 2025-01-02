@@ -63,12 +63,8 @@ public class JwtMainService implements JwtService {
 
     @Override
     public void revokeAllToken(User user) {
-        var tokens = tokenRepository.findAllAccessTokenByUser(user.getUserId())
-                .stream()
-                .map(Token::logOut)
-                .toList();
-
-
+        var tokens = tokenRepository.findAllAccessTokenByUser(user.getUserId());
+        tokens.forEach(t -> t.setLoggedOut(true));
         tokenRepository.saveAll(tokens); //тут могут токены не сохраниться из-за дефолтных equals и hashcode
     }
 

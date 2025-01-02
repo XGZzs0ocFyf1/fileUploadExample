@@ -16,12 +16,6 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
             """)
     List<Token> findAllAccessTokenByUser(Long userId);
 
-    @Query("""
-       SELECT t FROM Token t inner join User u
-            on t.user.userId = u.userId
-            where t.accessToken = :accessToken
-    """)
-
     Optional<Token> findByAccessToken(String accessToken);
 
     Optional<Token> findByRefreshToken(String refreshToken);
