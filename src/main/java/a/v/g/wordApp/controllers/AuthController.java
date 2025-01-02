@@ -3,7 +3,6 @@ package a.v.g.wordApp.controllers;
 import a.v.g.wordApp.dtos.AuthenticationResponseDto;
 import a.v.g.wordApp.dtos.JwtResponse;
 import a.v.g.wordApp.dtos.LoginRq;
-import a.v.g.wordApp.dtos.RegistrationUserDto;
 import a.v.g.wordApp.exceptions.AppError;
 import a.v.g.wordApp.service.AuthenticationService;
 import a.v.g.wordApp.service.UserService;

@@ -1,7 +1,6 @@
 package a.v.g.wordApp.service.tokens;
 
 
-import a.v.g.wordApp.dtos.TokenDTO;
 import a.v.g.wordApp.model.sec.Token;
 import a.v.g.wordApp.model.sec.User;
 import a.v.g.wordApp.repo.TokenRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
