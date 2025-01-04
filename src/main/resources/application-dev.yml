@@ -70,4 +70,12 @@ registration:
     lifeTime: 30m
 
 
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: ${wordAppKeystore}
+    key-store-password: ${wordAppKeystorePwd}
+    key-store-type: PKCS12
+
 
