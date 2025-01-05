@@ -2,6 +2,7 @@ package a.v.g.wordApp.model;
 
 
 import jakarta.persistence.*;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -55,5 +56,10 @@ public class FileDB {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public String generateBase64Image() {
+        return Base64.encodeBase64String(this.data);
+    }
+
 
 }

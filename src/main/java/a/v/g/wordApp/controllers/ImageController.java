@@ -13,12 +13,12 @@ public class ImageController {
     @Autowired
     private FileStorageService storageService;
 
-    //это контроллер для шаблона (а сам шаблон дергает метод из файл контроллера)
+    //это контроллер для шаблона (а сам шаблон дергает метод из файла контроллера)
     @GetMapping("/view-image/{fileOid}")
     public String viewImage(@PathVariable String fileOid, Model model) {
-        model.addAttribute("fileOid", fileOid);
         FileDB fileDB = storageService.getFile(fileOid).get();
-
+        model.addAttribute("fileOid", fileOid);
+        model.addAttribute("fileDB", fileDB);
         return "image-renderer"; // Имя Thymeleaf-шаблона
     }
 }
