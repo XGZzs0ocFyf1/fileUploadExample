@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Display Image</title>
+</head>
+<body>
+<h2>Способ 1</h2>
+<h3>Вариант для загрузки маленьких файлов</h3>
+
+
+
+<h2>Способ 2</h2>
+<h3>Вариант для загрузки больших файлов</h3>
+<p>По-хорошему, его так нужно загружать все изображения, а не через способ 1.</p>
+<p>fileOid =  <span data-th-text="${fileOid}"/></p>
+<img data-th-src="@{/files/{fileOid}(fileOid=${fileOid})}" alt="Image" src="">
+</body>
+</html>

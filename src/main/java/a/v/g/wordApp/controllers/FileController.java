@@ -5,12 +5,17 @@ import a.v.g.wordApp.response.ResponseFile;
 import a.v.g.wordApp.response.ResponseMessage;
 import a.v.g.wordApp.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
@@ -56,12 +61,25 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body(files);
     }
 
-    @GetMapping("/files/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-        FileDB fileDB = storageService.getFile(id);
+    //так файл ты скачаешь
+    @GetMapping("/files/{fileId}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String fileId) {
+       return storageService.getFile(fileId) //здесь тип опциональный (т.е. может быть Null внутри)
+               .map(dbFIle -> //мап это как будто ты ифчик делаешь на контейнере изменяя его содержимое (те если внутри чот есть, применится вот этот код)
+                       ResponseEntity.ok() //просто красивая обертка для ответа
+                               .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileId + "\"") // без этой строчки вместо закачки у тебя будет кусок как будто ты изображение в текстовом редакторе открыл
+                               .body(dbFIle.getData()) // в содержимое ответа кладем массив байтов
+               ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)); //если внутри optional null те он пустой, то мы возвращаем ошибку 404 (
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
-                .body(fileDB.getData());
     }
+
+    //так картинку ты отрендеришь
+    @GetMapping(value ="/images/{fileId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable String fileId) {
+        return storageService.getFile(fileId)
+                .map(dbFIle -> ResponseEntity.ok().body(dbFIle.getData()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+
 }
