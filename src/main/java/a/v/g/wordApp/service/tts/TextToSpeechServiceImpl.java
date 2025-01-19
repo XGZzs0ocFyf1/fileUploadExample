@@ -1,24 +1,12 @@
 package a.v.g.wordApp.service.tts;
 
-import a.v.g.wordApp.utils.grpc.AuthTokenInterceptor;
-import io.grpc.ClientInterceptors;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import yandex.cloud.api.ai.tts.v3.SynthesizerGrpc;
-import yandex.cloud.api.ai.tts.v3.SynthesizerGrpc.*;
+import yandex.cloud.api.ai.tts.v3.SynthesizerGrpc.SynthesizerStub;
 import yandex.cloud.api.ai.tts.v3.Tts.AudioFormatOptions;
-import yandex.cloud.api.ai.tts.v3.Tts.RawAudio;
 import yandex.cloud.api.ai.tts.v3.Tts.UtteranceSynthesisRequest;
 import yandex.cloud.api.ai.tts.v3.Tts.UtteranceSynthesisResponse;
-
-import java.io.FileOutputStream;
-
-import static yandex.cloud.api.ai.tts.v3.SynthesizerGrpc.newBlockingStub;
-import io.grpc.stub.StreamObserver;
-import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 

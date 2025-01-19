@@ -70,7 +70,11 @@ registration:
   authCode:
     lifeTime: 30m
 
-
+tts:
+  api:
+    cloud:
+      yandex:
+        token: ${YANDEX_TTS_TOKEN}
 #server:
 #  port: 8443
 #  ssl:

@@ -4,6 +4,8 @@ import io.grpc.CallCredentials;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import yandex.cloud.api.ai.tts.v3.SynthesizerGrpc;
@@ -14,6 +16,9 @@ import java.util.concurrent.Executor;
 @Configuration
 public class GrpcClientConfiguration {
 
+    @Value("${tts.api.cloud.yandex.token}")
+    private String ttsJwtToken;
+
     @Bean
     public ManagedChannel managedChannel() {
         return ManagedChannelBuilder.forAddress("tts.api.cloud.yandex.net", 443)
@@ -22,18 +27,13 @@ public class GrpcClientConfiguration {
                 .build();
     }
 
-//    @Bean
-//    public SynthesizerStub synthesizerStub(ManagedChannel managedChannel) {
-//        return SynthesizerGrpc
-//                .newStub(managedChannel)
-//    }
 
     private static final Metadata.Key<String> AUTHORIZATION_HEADER =
             Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
 
     private String getJwtToken() {
         // Реализуйте метод для получения вашего токена
-        return "Bearer t1.9euelZrLmc2LnY7Nk5ySl47Ji5iKz-3rnpWayJKYlZDMk5WOycuSjcmVz8nl8_dqA3pD-e9naVYj_t3z9yoyd0P572dpViP-zef1656Vmoqdi5zPlZzLm5nIkJzLyM3J7_zF656Vmoqdi5zPlZzLm5nIkJzLyM3J.zUZlLfIzgxEMvGMYRSXLJMCWHNENEJ-shFRn4B3waXLyV6-RIOaGs8dhgqr4Vpdr0IkXNJGKKQvwfRdvijI-CQ";
+        return "Bearer " + ttsJwtToken;
     }
 
     @Bean
