@@ -2,6 +2,7 @@ package a.v.g.wordApp.config;
 
 
 import a.v.g.wordApp.service.UserMainService;
+import a.v.g.wordApp.service.UserService;
 import a.v.g.wordApp.service.tokens.JwtMainService;
 import a.v.g.wordApp.utils.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
@@ -25,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtMainService jwtMainService;
-    private final UserMainService userMainService;
+    private final UserService userMainService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,

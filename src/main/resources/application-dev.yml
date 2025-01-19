@@ -54,7 +54,8 @@ jwt:
   refreshExpiration: 600m
 
 registration:
-  link: "http://localhost:8080/registration/submit?rt="
+  link: "https://localhost:8443/registration/submit?rt="
+#  link: "http://localhost:8080/registration/submit?rt="
   textTemplate: "Привет! {0},
             
             Спасибо за регистрацию на нашем сервисе. Для завершения регистрации, пожалуйста, перейдите по следующей ссылке:
@@ -70,12 +71,12 @@ registration:
     lifeTime: 30m
 
 
-server:
-  port: 8443
-  ssl:
-    enabled: true
-    key-store: ${wordAppKeystore}
-    key-store-password: ${wordAppKeystorePwd}
-    key-store-type: PKCS12
+#server:
+#  port: 8443
+#  ssl:
+#    enabled: true
+#    key-store: ${wordAppKeystore}
+#    key-store-password: ${wordAppKeystorePwd}
+#    key-store-type: PKCS12
 
 

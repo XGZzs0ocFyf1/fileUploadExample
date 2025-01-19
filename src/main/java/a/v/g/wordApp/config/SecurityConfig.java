@@ -40,7 +40,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/login/**","/registration/**", "/refresh_token/**").permitAll()
+                                .requestMatchers("/login/**","/css/**","/registration/**", "/refresh_token/**").permitAll()
+                                .requestMatchers("/api/tts/**").permitAll() //TODO!
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/admin-old/**").hasAuthority("ADMIN")
                                 .requestMatchers("/hello").anonymous()

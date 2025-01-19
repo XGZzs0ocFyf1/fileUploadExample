@@ -1,0 +1,71 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0948ee, #ff758c);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box; /* Учет padding и border */
+}
+
+.login-container {
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 90%; /* Обеспечиваем адаптивность */
+    max-width: 400px; /* Максимальная ширина для больших экранов */
+    text-align: center;
+    box-sizing: border-box; /* Учет padding при расчете ширины */
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #133bd9;
+}
+
+/* Поля ввода */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+    width: 100%; /* Полная ширина для группы ввода */
+    box-sizing: border-box; /* Учет padding */
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%; /* Поля ввода занимают всю ширину группы */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box; /* Учет padding */
+}
+
+/* Кнопка отправки */
+button {
+    background: #75b5ff;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    width: 100%; /* Кнопка занимает всю ширину */
+    max-width: 100%; /* Гарантия, что кнопка не выйдет за пределы */
+}
+
+button:hover {
+    background: #1d6dd4;
+}

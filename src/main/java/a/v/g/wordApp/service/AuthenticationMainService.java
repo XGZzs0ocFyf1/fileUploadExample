@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,10 +37,22 @@ public class AuthenticationMainService implements AuthenticationService{
     private final EmailService emailService;
     private final AuthCodeService authCodeService;
 
+    public Role createNewUser(Optional<Role> in) {
+        if (in.isPresent()){
+            System.out.println(in + "is present");
+            return in.get();
+        }else {
+            return roleRepository.save(new Role(ROLE_NAME.USER.toString()));
+        }
+
+    }
+
     public void registrationRequest(RegistrationUserDto request) {
-        var userRole = roleRepository.findByName(ROLE_NAME.USER.toString()).orElse(
-                roleRepository.save(new Role(ROLE_NAME.USER.toString()))
-        );
+        Optional<Role> mbROle = roleRepository.findByName(ROLE_NAME.USER.toString());
+        var userRole = mbROle.orElse(createNewUser(mbROle));
+
+//                roleRepository.save(new Role(ROLE_NAME.USER.toString())) // TODO?
+
 
         User user = User
                 .builder()
