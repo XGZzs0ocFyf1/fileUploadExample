@@ -20,12 +20,7 @@ public class TextToSpeechServiceImpl implements TextToSpeechService{
         // Создаем запрос
         UtteranceSynthesisRequest request = UtteranceSynthesisRequest.newBuilder()
                 .setText(text)
-                .setOutputAudioSpec(AudioFormatOptions.newBuilder()
-//                        .setRawAudio(RawAudio.newBuilder()
-//                                .setAudioEncoding(RawAudio.AudioEncoding.LINEAR16_PCM)
-//                                .setSampleRateHertz(22050)
-//                                .build())
-                        .build())
+                .setOutputAudioSpec(AudioFormatOptions.newBuilder().build())
                 .build();
 
         // Потоковый ответ

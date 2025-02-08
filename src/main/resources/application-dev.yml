@@ -25,7 +25,8 @@ spring:
     baseline-on-migrate: true
     validateMigrationNaming: true
     locations: classpath:db/migration
-    default-schema: ${db_schema}
+#    default-schema: ${db_schema}
+    schemas: ${db_schema}
   servlet:
     multipart:
       max-file-size: 2MB
@@ -84,3 +85,21 @@ tts:
 #    key-store-type: PKCS12
 
 
+# Подключение к Яндекс.Объектному хранилищу (S3-совместимость)
+cloud:
+  aws:
+    s3-access-key: ${s3-access-key}
+    s3-secret-key: ${s3-secret-key}
+    region: "ru-central1"
+    s3-endpoint: "http://storage.yandexcloud.net"
+
+  yandex:
+    token-url: "https://iam.api.cloud.yandex.net/iam/v1/tokens"
+    OAuth-token: ${yandex-oauth-token}
+
+  log4j:
+    logger:
+      com:
+        amazonaws:
+            request: "DEBUG"
+            response: "DEBUG"

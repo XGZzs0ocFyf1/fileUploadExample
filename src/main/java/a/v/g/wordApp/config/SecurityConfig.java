@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,6 +26,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableAsync
 //@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final UserMainService userMainService;
@@ -42,6 +44,14 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/login/**","/css/**","/registration/**", "/refresh_token/**").permitAll()
                                 .requestMatchers("/api/tts/**").permitAll() //TODO!
+                                .requestMatchers("/api/token/**").permitAll() //TODO!
+                                .requestMatchers("/api/images/**").permitAll() //TODO!
+                                //swagger
+                                .requestMatchers("/swagger-ui/**").permitAll() //TODO!
+                                .requestMatchers("/v3/api-docs/**").permitAll() //TODO!
+                                .requestMatchers("/photos/**").permitAll() //TODO!
+                                .requestMatchers("/photos/test/**").permitAll() //TODO!
+                                .requestMatchers("/dev/**").permitAll() //TODO!
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/admin-old/**").hasAuthority("ADMIN")
                                 .requestMatchers("/hello").anonymous()

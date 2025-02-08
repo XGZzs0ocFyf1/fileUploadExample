@@ -27,4 +27,11 @@ public class FileUploadExceptionAdvice extends ResponseEntityExceptionHandler {
         var msg = "Незарегистрированный пользователь";
         return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
     }
+
+
+    @ExceptionHandler(FileNotFoundInBucketException.class)
+    public ResponseEntity<String> handleFileNotFoundException(CodeNotFoundException ex) {
+        var msg = "Файл не найден в бакете";
+        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+    }
 }
