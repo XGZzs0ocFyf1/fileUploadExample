@@ -38,7 +38,7 @@ public class ImageController {
     @GetMapping("/test")
     public String rnd(@RequestParam Optional<String> key) throws FileNotFoundInBucketException {
         System.out.println("key = " + key);
-      //  s3Service.testIt();
+        s3Service.testIt();
         return "";
     }
 

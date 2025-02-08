@@ -1,16 +1,16 @@
 package a.v.g.wordApp.service.yandx;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import a.v.g.wordApp.model.yc.KeyInfo;
+import a.v.g.wordApp.model.yc.TokenData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.Data;
-import lombok.ToString;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -27,45 +27,31 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-//yc iam key create --output D:\code\keys\translation-api-key --service-account-name translation-api
 
 
+@Service
 public class PlanB {
 
 
-    private static String jsonFileName = "D:\\code\\keys\\translation-api-key\\1.json";
-    private static final String tokenExchangeUrl = "https://iam.api.cloud.yandex.net/iam/v1/tokens";
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class KeyInfo {
-        public String id;
-        public String service_account_id;
-        public String private_key;
-    }
-
-   @ToString
-    public static class TokenData {
-        public String iamToken;
-        public String expiresAt;
-    }
-
-    record TokenData2(
-            String iamToken,
-            String expiresAt
-    ){}
-
-    public static void main(String[] args) throws Exception {
-        getIamToken();
-    }
+    @Value("${cloud.yandex.translation.jsonFileName}")
+    private String jsonFileName;
+    @Value("${cloud.yandex.token-url}")
+    private String tokenExchangeUrl;
 
 
-    private static String getIamToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+
+
+
+
+
+    private  String getIamToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String encodedToken = getJwtToken();
         System.out.println(encodedToken);
         return exchangeJwtToIam(encodedToken);
     }
 
-    private static String exchangeJwtToIam(String encodedToken) throws JsonProcessingException {
+    private String exchangeJwtToIam(String encodedToken) throws JsonProcessingException {
         // Инициализируем RestTemplate
         RestTemplate restTemplate = new RestTemplate();
 
@@ -97,22 +83,20 @@ public class PlanB {
         System.out.println("Response body: " + response.getBody());
         System.out.println("headers: " + response.getHeaders());
 
-        var x = (new ObjectMapper()).readValue(response.getBody(), TokenData2.class);
+        var x = (new ObjectMapper()).readValue(response.getBody(), TokenData.class);
         System.out.println("Response body2: " + x);
 
         return "";
     }
 
-    private static String getJwtToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private  String getJwtToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String content = new String(Files.readAllBytes(Paths.get(jsonFileName)));
         KeyInfo keyInfo = (new ObjectMapper()).readValue(content, KeyInfo.class);
 
-        String privateKeyString = keyInfo.private_key;
-        String serviceAccountId = keyInfo.service_account_id;
-        String keyId = keyInfo.id;
+        System.out.println("генерируем токен для аккаунта: " + keyInfo.serviceAccountId());
 
         PemObject privateKeyPem;
-        try (PemReader reader = new PemReader(new StringReader(privateKeyString))) {
+        try (PemReader reader = new PemReader(new StringReader(keyInfo.privateKey()))) {
             privateKeyPem = reader.readPemObject();
         }
 
@@ -124,8 +108,8 @@ public class PlanB {
         // Формирование JWT.
 
         return Jwts.builder()
-                .header().add("kid", keyId).and()
-                .issuer(serviceAccountId)
+                .header().add("kid", keyInfo.id()).and()
+                .issuer(keyInfo.serviceAccountId())
                 .audience().add(tokenExchangeUrl)
                 .and()
                 .issuedAt(Date.from(now))

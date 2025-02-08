@@ -94,6 +94,8 @@ cloud:
     s3-endpoint: "http://storage.yandexcloud.net"
 
   yandex:
+    translation:
+      jsonFileName: "D:\\code\\keys\\translation-api-key\\1.json"
     token-url: "https://iam.api.cloud.yandex.net/iam/v1/tokens"
     OAuth-token: ${yandex-oauth-token}
 
@@ -103,3 +105,4 @@ cloud:
         amazonaws:
             request: "DEBUG"
             response: "DEBUG"
+

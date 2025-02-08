@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +50,18 @@ public class S3Service {
         } catch (Exception e) {
             throw new FileNotFoundInBucketException("");
         }
+    }
+
+    public void testIt() throws FileNotFoundInBucketException {
+        System.out.println("buckets");
+        var x = s3Client.listObjects(
+                ListObjectsRequest
+                        .builder()
+                        .bucket(bucketName)
+                        .build());
+
+        x.contents().forEach(System.out::println);
+//        s3Client.listBuckets().buckets().forEach(System.out::println);
     }
 
 }
