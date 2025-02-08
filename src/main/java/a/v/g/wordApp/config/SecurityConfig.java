@@ -52,6 +52,7 @@ public class SecurityConfig {
                                 .requestMatchers("/photos/**").permitAll() //TODO!
                                 .requestMatchers("/photos/test/**").permitAll() //TODO!
                                 .requestMatchers("/dev/**").permitAll() //TODO!
+                                .requestMatchers("/test/**").permitAll() //TODO!
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/admin-old/**").hasAuthority("ADMIN")
                                 .requestMatchers("/hello").anonymous()

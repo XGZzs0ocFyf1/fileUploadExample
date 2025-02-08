@@ -28,9 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
 @Service
-public class PlanB {
+public class IamTokenService {
 
 
     @Value("${cloud.yandex.translation.jsonFileName}")
@@ -39,15 +38,8 @@ public class PlanB {
     private String tokenExchangeUrl;
 
 
-
-
-
-
-
-
-    private  String getIamToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public String getIamToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String encodedToken = getJwtToken();
-        System.out.println(encodedToken);
         return exchangeJwtToIam(encodedToken);
     }
 
@@ -66,9 +58,6 @@ public class PlanB {
         // Формируем HttpEntity (содержимое + заголовки)
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
-        // URL сервиса
-
-
         // Отправляем POST-запрос и получаем ответ
         ResponseEntity<String> response = restTemplate.exchange(
                 tokenExchangeUrl,
@@ -77,19 +66,11 @@ public class PlanB {
                 String.class
         );
 
-
-        // Выводим ответ (в данном случае строку)
-        System.out.println("Response code: " + response.getStatusCode());
-        System.out.println("Response body: " + response.getBody());
-        System.out.println("headers: " + response.getHeaders());
-
-        var x = (new ObjectMapper()).readValue(response.getBody(), TokenData.class);
-        System.out.println("Response body2: " + x);
-
-        return "";
+        var tokenData = (new ObjectMapper()).readValue(response.getBody(), TokenData.class);
+        return tokenData.iamToken();
     }
 
-    private  String getJwtToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private String getJwtToken() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String content = new String(Files.readAllBytes(Paths.get(jsonFileName)));
         KeyInfo keyInfo = (new ObjectMapper()).readValue(content, KeyInfo.class);
 
@@ -102,10 +83,7 @@ public class PlanB {
 
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyPem.getContent()));
-
         Instant now = Instant.now();
-
-        // Формирование JWT.
 
         return Jwts.builder()
                 .header().add("kid", keyInfo.id()).and()
