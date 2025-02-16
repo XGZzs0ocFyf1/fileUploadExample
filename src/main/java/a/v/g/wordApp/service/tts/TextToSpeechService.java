@@ -1,5 +1,10 @@
 package a.v.g.wordApp.service.tts;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface TextToSpeechService {
-    public void synthesizeText(String text, String outputFilePath);
+
+
+    CompletableFuture<String> asyncSynthesizeAndUploadText(String text);
+    void synthesizeText(String text, String outputFilePath);
 }

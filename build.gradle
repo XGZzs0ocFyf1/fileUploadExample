@@ -60,7 +60,6 @@ dependencies {
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 	implementation("org.bouncycastle:bcprov-jdk18on:1.80")
-
 }
 
 protobuf {

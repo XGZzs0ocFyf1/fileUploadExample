@@ -4,22 +4,36 @@ import a.v.g.wordApp.exceptions.FileNotFoundInBucketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class S3Service implements YCS3Api {
 
     private final S3Client s3Client;
     private final String bucketName = "spring-boot-s3-exmaple";
-    private final String PREFIX = "photos/";
 
-    public String uploadFile( String filename, byte[] data, String contentType) {
-        String key = PREFIX + filename;
+
+
+    @Async
+    public CompletableFuture<String> asyncUploadFile(String folderName, String filename,  byte[] data, String contentType) {
+        return CompletableFuture.supplyAsync(() -> uploadFile(folderName, filename, data, contentType));
+    }
+
+    //foltername looks like "photos/"
+    public String uploadFile(String folderName, String filename, byte[] data, String contentType) {
+        String key = Path.of(folderName, filename).toString();
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)

@@ -94,10 +94,18 @@ cloud:
     s3-endpoint: "http://storage.yandexcloud.net"
 
   yandex:
+    cloud:
+      folder:
+        id: ${yandex-folder-id}
     translation:
       jsonFileName: "D:\\code\\keys\\translation-api-key\\1.json"
     token-url: "https://iam.api.cloud.yandex.net/iam/v1/tokens"
     OAuth-token: ${yandex-oauth-token}
+
+    art:
+      generation.url: "https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync"
+      polling.url: "https://llm.api.cloud.yandex.net/operations"
+
 
   log4j:
     logger:

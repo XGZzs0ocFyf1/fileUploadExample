@@ -1,7 +1,7 @@
 package a.v.g.wordApp.controllers.s3;
 
 import a.v.g.wordApp.exceptions.FileNotFoundInBucketException;
-import a.v.g.wordApp.service.s3.S3Service;
+import a.v.g.wordApp.service.s3.YCS3Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,11 +23,11 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 public class ImageController {
 
-    private final S3Service s3Service;
+    private final YCS3Api s3Service;
 
     @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE)
     public String uploadFile(@RequestParam MultipartFile photo) throws IOException {
-        return s3Service.uploadFile(photo.getOriginalFilename(), photo.getBytes(), photo.getContentType());
+        return s3Service.uploadFile("photos",photo.getOriginalFilename(), photo.getBytes(), photo.getContentType());
     }
 
     @GetMapping
